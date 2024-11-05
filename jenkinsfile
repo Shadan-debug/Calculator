@@ -8,17 +8,20 @@ pipeline {
         }
         stage('Test') {
             steps {
-                echo 'Testing...'
-                // Here, include commands to run your test files, e.g., `npm test` or `pytest`
+                echo 'Running Unit Tests...'
+                // Command to run unit tests, e.g., `npm test` for Jest or Mocha
+                sh 'npm test'
             }
         }
+
         stage('Integration Test') {
             when {
                 expression { currentBuild.resultIsBetterOrEqualTo('SUCCESS') }
             }
             steps {
-                echo 'Running integration tests...'
-                // Add integration test command here
+                echo 'Running Integration Tests...'
+                // Add your integration test command here, e.g., Jest or Mocha with specific integration test files
+                sh 'npm run test:integration'
             }
         }
 
@@ -27,8 +30,9 @@ pipeline {
                 expression { currentBuild.resultIsBetterOrEqualTo('SUCCESS') }
             }
             steps {
-                echo 'Running E2E tests...'
-                // Add E2E test command here
+                echo 'Running E2E Tests...'
+                // Add E2E test command, e.g., Cypress or Selenium
+                sh 'npm run test:e2e'
             }
         }
         stage('Deploy') {
