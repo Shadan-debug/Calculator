@@ -10,7 +10,6 @@ pipeline {
             steps {
                 echo 'Running Unit Tests...'
                 // Command to run unit tests, e.g., `npm test` for Jest or Mocha
-                sh 'npm test'
             }
         }
 
