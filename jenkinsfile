@@ -4,17 +4,36 @@ pipeline {
         stage('Build') {
             steps {
                 echo 'Building...'
+                // Example build command, if needed
+                // sh 'npm install' or sh 'make build' or similar build command
             }
         }
         stage('Test') {
             steps {
-                echo 'Testing...'
-                // Here, include commands to run your test files, e.g., `npm test` or `pytest`
+                echo 'Running Unit Tests...'
+                // Run unit tests for Node.js
+                sh 'npm test'  // or replace with a test command suited to your project
+            }
+        }
+        stage('Integration Test') {
+            steps {
+                echo 'Running Integration Tests...'
+                // Run integration tests if available
+                // sh 'npm run test:integration' for example
+            }
+        }
+        stage('E2E Tests') {
+            steps {
+                echo 'Running End-to-End Tests...'
+                // Run e2e tests if available, e.g., Cypress, Selenium, etc.
+                // sh 'npm run test:e2e' or specific commands for e2e testing
             }
         }
         stage('Deploy') {
             steps {
                 echo 'Deploying...'
+                // Example deployment command
+                // sh 'npm run deploy' or any other deployment commands
             }
         }
     }
