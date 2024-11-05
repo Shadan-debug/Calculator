@@ -1,48 +1,17 @@
 pipeline {
     agent any
-
     stages {
-        stage('Checkout') {
-            steps {
-                checkout([
-                    $class: 'GitSCM',
-                    branches: [[name: '*/main']],
-                    doGenerateSubmoduleConfigurations: false,
-                    extensions: [[$class: 'CleanBeforeCheckout']],
-                    submoduleCfg: [],
-                    userRemoteConfigs: [[url: 'https://github.com/Shadan-debug/Calculator.git']]
-                ])
-            }
-        }
-        
-        stage('Verify Files') {
-            steps {
-                // List files to confirm package.json exists
-                bat 'dir'
-            }
-        }
-
         stage('Build') {
-            environment {
-                // Add npm to PATH if necessary
-                PATH = "$PATH:C:\\Program Files\\nodejs"
-            }
             steps {
                 echo 'Building...'
-                bat 'npm install'
             }
         }
-
         stage('Test') {
-            when {
-                expression { currentBuild.resultIsBetterOrEqualTo('SUCCESS') }
-            }
             steps {
-                echo 'Running tests...'
-                bat 'npm test'
+                echo 'Testing...'
+                // Here, include commands to run your test files, e.g., `npm test` or `pytest`
             }
         }
-
         stage('Integration Test') {
             when {
                 expression { currentBuild.resultIsBetterOrEqualTo('SUCCESS') }
@@ -62,24 +31,10 @@ pipeline {
                 // Add E2E test command here
             }
         }
-
         stage('Deploy') {
-            when {
-                expression { currentBuild.resultIsBetterOrEqualTo('SUCCESS') }
-            }
             steps {
-                echo 'Deploying application...'
-                // Add deployment command here
+                echo 'Deploying...'
             }
-        }
-    }
-
-    post {
-        always {
-            echo 'Pipeline finished.'
-        }
-        failure {
-            echo 'Pipeline failed.'
         }
     }
 }
