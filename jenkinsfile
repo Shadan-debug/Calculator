@@ -1,35 +1,85 @@
 pipeline {
     agent any
+
     stages {
+        stage('Checkout') {
+            steps {
+                checkout([
+                    $class: 'GitSCM',
+                    branches: [[name: '*/main']],
+                    doGenerateSubmoduleConfigurations: false,
+                    extensions: [[$class: 'CleanBeforeCheckout']],
+                    submoduleCfg: [],
+                    userRemoteConfigs: [[url: 'https://github.com/Shadan-debug/Calculator.git']]
+                ])
+            }
+        }
+        
+        stage('Verify Files') {
+            steps {
+                // List files to confirm package.json exists
+                bat 'dir'
+            }
+        }
+
         stage('Build') {
+            environment {
+                // Add npm to PATH if necessary
+                PATH = "$PATH:C:\\Program Files\\nodejs"
+            }
             steps {
                 echo 'Building...'
-                bat 'npm install'  // Use bat for Windows
+                bat 'npm install'
             }
         }
+
         stage('Test') {
+            when {
+                expression { currentBuild.resultIsBetterOrEqualTo('SUCCESS') }
+            }
             steps {
-                echo 'Running Unit Tests...'
-                bat 'npm test'  // Use bat for Windows
+                echo 'Running tests...'
+                bat 'npm test'
             }
         }
+
         stage('Integration Test') {
+            when {
+                expression { currentBuild.resultIsBetterOrEqualTo('SUCCESS') }
+            }
             steps {
-                echo 'Running Integration Tests...'
-                bat 'npm run test:integration'  // Use bat for Windows
+                echo 'Running integration tests...'
+                // Add integration test command here
             }
         }
+
         stage('E2E Tests') {
+            when {
+                expression { currentBuild.resultIsBetterOrEqualTo('SUCCESS') }
+            }
             steps {
-                echo 'Running End-to-End Tests...'
-                bat 'npm run test:e2e'  // Use bat for Windows
+                echo 'Running E2E tests...'
+                // Add E2E test command here
             }
         }
+
         stage('Deploy') {
-            steps {
-                echo 'Deploying...'
-                bat 'npm run deploy'  // Use bat for Windows
+            when {
+                expression { currentBuild.resultIsBetterOrEqualTo('SUCCESS') }
             }
+            steps {
+                echo 'Deploying application...'
+                // Add deployment command here
+            }
+        }
+    }
+
+    post {
+        always {
+            echo 'Pipeline finished.'
+        }
+        failure {
+            echo 'Pipeline failed.'
         }
     }
 }
